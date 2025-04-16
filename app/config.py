@@ -1,0 +1,1 @@
+DATABASE_URL="postgres://postgres:pgpassword@marketplace-postgres:5432/marketplace"
