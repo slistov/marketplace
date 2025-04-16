@@ -1,0 +1,30 @@
+services:
+  marketplace:
+    image: marketplace
+    container_name: marketplace-api
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8000:8000
+    networks:
+      - marketplace
+
+  postgres:
+    container_name: marketplace-postgres
+    image: postgres:14
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pgpassword}
+      POSTGRES_DB: ${POSTGRES_DB:-marketplace}
+      PGDATA: /data/postgres
+    volumes:
+      - ./pg_data:/data/postgres
+    ports:
+      - 5432:5432
+    networks:
+      - marketplace
+    restart: unless-stopped
+
+networks:
+  marketplace:
