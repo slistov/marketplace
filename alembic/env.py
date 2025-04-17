@@ -6,7 +6,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
-from app.catalog.adapters.orm import meta
+from app.categories.adapters.orm import meta
 from app.config import DATABASE_URL
 
 # this is the Alembic Config object, which provides

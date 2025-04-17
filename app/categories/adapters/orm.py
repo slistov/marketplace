@@ -2,7 +2,7 @@ from sqlalchemy import Column, ForeignKey, Integer, MetaData, String, Table
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import registry, relationship
 
-from app.catalog.domain import model
+from app.categories.domain import model
 from app.config import DATABASE_URL
 
 engine = create_async_engine(
@@ -23,13 +23,9 @@ categories = Table(
 
 mapper_registry = registry()
 mapper_registry.map_imperatively(
-    model.Item,
+    model.Category,
     categories,
-    properties={
-        "categories": relationship(
-            model.Item, backref="categories", order_by=categories.c.id
-        )
-    },
+    properties={"children": relationship(model.Category, order_by=categories.c.id)},
 )
 
 

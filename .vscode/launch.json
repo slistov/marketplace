@@ -1,19 +1,18 @@
 {
     "configurations": [
         {
-            "name": "Docker: Python - Fastapi",
-            "type": "docker",
+            "name": "Python Debugger: FastAPI",
+            "type": "debugpy",
             "request": "launch",
-            "preLaunchTask": "docker-run: debug",
-            "python": {
-                "pathMappings": [
-                    {
-                        "localRoot": "${workspaceFolder}",
-                        "remoteRoot": "/app"
-                    }
-                ],
-                "projectType": "fastapi"
-            }
+            "module": "uvicorn",
+            "args": [
+                "app.categories.routers.main:app",
+                "--host",
+                "marketplace-api",
+                "--port",
+                "8000",
+            ],
+            "jinja": true
         }
     ]
 }
