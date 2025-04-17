@@ -9,7 +9,7 @@ class Repo:
     def __init__(self, session) -> None:
         self.session = session
 
-    async def get_subree(self, id):
+    async def get_subtree(self, id):
         return await self._get_subtree(id)
 
     async def _get_subtree(self, id) -> list[Category]:
