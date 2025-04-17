@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer, MetaData, String, Table
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import registry, relationship, sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import registry, relationship
 
 from app.categories.domain import model
 from app.config import DATABASE_URL
@@ -9,7 +9,7 @@ engine = create_async_engine(
     DATABASE_URL,
     echo=True,
 )
-async_session = sessionmaker(
+async_session = async_sessionmaker(
     autocommit=False,
     autoflush=False,
     bind=engine,
@@ -35,8 +35,6 @@ mapper_registry.map_imperatively(
 )
 
 
-def get_session():
-    # with async_session() as session:
-    #     yield session
-    session = async_session()
-    yield session
+async def get_session():
+    async with async_session() as session:
+        yield session

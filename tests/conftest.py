@@ -1,4 +1,5 @@
 import pytest
+import pytest_asyncio
 
 from app.categories.adapters.orm import async_session
 
@@ -16,15 +17,12 @@ DB_CONTENT = [
 ]
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def db_content():
     return DB_CONTENT
 
 
-@pytest.fixture
-def session():
-    s = async_session()
-    try:
+@pytest_asyncio.fixture(scope="function")
+async def session():
+    async with async_session() as s:
         yield s
-    finally:
-        s.rollback()

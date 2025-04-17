@@ -1,6 +1,6 @@
 """
 Только для демонстрации, пользы мало.
-По сути, здесь проверяется только как репозиторий
+Проверяется как репозиторий
 преобразует результаты запроса в модели предметной области
 """
 
@@ -25,11 +25,11 @@ async def test_repo_get_subtree(db_content):
     fake_session = FakeSession(db_content)
     repo = Repo(fake_session)
 
-    subtree = await repo.get_subtree(2)
+    subtree = await repo.get_subtree(200)
     expected = [
-        Category(*(4, "Смартфоны", 2)),
-        Category(*(5, "Аксессуары", 2)),
-        Category(*(6, "Чехлы", 5)),
-        Category(*(7, "Зарядки", 5)),
+        Category(*(400, "Смартфоны", 200)),
+        Category(*(500, "Аксессуары", 200)),
+        Category(*(600, "Чехлы", 500)),
+        Category(*(700, "Зарядки", 500)),
     ]
     assert subtree == expected
