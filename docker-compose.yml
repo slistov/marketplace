@@ -9,12 +9,22 @@ services:
       - 8000:8000
     networks:
       - marketplace
+    command: bash -c "
+        alembic upgrade head
+        && gunicorn --bind 0.0.0.0:8000 -k uvicorn.workers.UvicornWorker app.categories.routers.main:app
+      "    
+       
 
   postgres:
     container_name: marketplace-postgres
     image: postgres:14
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      PGUSER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pgpassword}
       POSTGRES_DB: ${POSTGRES_DB:-marketplace}
       PGDATA: /data/postgres
