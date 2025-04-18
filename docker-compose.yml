@@ -9,6 +9,11 @@ services:
       - 8000:8000
     networks:
       - marketplace
+    environment:
+      - DBUSER=postgres
+      - DBPASSWORD=pgpassword
+      - DBHOST=marketplace-postgres:5432
+      - DBNAME=marketplace
     command: bash -c "
         alembic upgrade head
         && gunicorn --bind 0.0.0.0:8000 -k uvicorn.workers.UvicornWorker app.categories.routers.main:app
