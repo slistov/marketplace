@@ -13,7 +13,12 @@ class Repo:
         return await self._get_subtree(id)
 
     async def _get_subtree(self, id) -> list[Category]:
-        return await self.__get_as_models(self.__exec_sql, stmt=sqls.SUBTREE, id=id)
+        condition1 = f"= {id}" if id else "ISNULL"
+        sql = sqls.SUBTREE.replace(":condition1", condition1)
+        return await self.__get_as_models(
+            self.__exec_sql,
+            stmt=sql,
+        )
 
     async def __get_as_models(self, sql_func, **kwargs) -> list[Category]:
         """Convert sql result to models list"""

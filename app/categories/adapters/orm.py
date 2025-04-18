@@ -24,7 +24,12 @@ categories = Table(
     meta,
     Column("id", Integer, primary_key=True),
     Column("name", String(255)),
-    Column("parent_id", Integer, ForeignKey("categories.id")),
+    Column(
+        "parent_id",
+        Integer().evaluates_none(),
+        ForeignKey("categories.id"),
+        nullable=True,
+    ),
 )
 
 mapper_registry = registry()

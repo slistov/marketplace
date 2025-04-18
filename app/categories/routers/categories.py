@@ -8,6 +8,8 @@ router = APIRouter(prefix="/categories", tags=["categories"])
 
 
 @router.get("")
-async def get_item_subtree(id: int, session=Depends(get_session)) -> list[Category]:
+async def get_item_subtree(
+    id: int | None = None, session=Depends(get_session)
+) -> list[Category]:
     data = await category.get_subtree(id, session)
     return data

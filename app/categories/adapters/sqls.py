@@ -2,7 +2,7 @@ SUBTREE = """
     WITH RECURSIVE category_tree AS (
     SELECT id, name, parent_id
     FROM categories
-    WHERE parent_id = :id
+    WHERE parent_id :condition1
     
     UNION ALL
 
