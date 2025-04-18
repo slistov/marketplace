@@ -30,6 +30,7 @@ categories = Table(
         ForeignKey("categories.id"),
         nullable=True,
     ),
+    Column("path", String(255), index=True),
 )
 
 mapper_registry = registry()
