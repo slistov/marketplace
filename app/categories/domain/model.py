@@ -7,4 +7,5 @@ from dataclasses import dataclass
 class Category:
     id: int
     name: str
+    path: str
     parent_id: int | None = None

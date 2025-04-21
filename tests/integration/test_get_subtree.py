@@ -8,11 +8,11 @@ from app.categories.services.category import get_subtree
 
 
 async def load_to_db(session, rows: list[tuple]):
-    Row = namedtuple("Row", ["id", "name", "parent_id"])
+    Row = namedtuple("Row", ["id", "name", "path", "parent_id"])
     for row in rows:
         await session.execute(
             text(
-                "INSERT INTO categories (id, name, parent_id) VALUES (:id, :name, :parent_id)"
+                "INSERT INTO categories (id, name, parent_id, path) VALUES (:id, :name, :parent_id, :path)"
             ),
             Row(*row)._asdict(),
         )
@@ -24,9 +24,9 @@ async def test_get_subtree(session, db_content):
     subtree = await get_subtree(200, session)
 
     expected = [
-        Category(*(400, "Смартфоны", 200)),
-        Category(*(500, "Аксессуары", 200)),
-        Category(*(600, "Чехлы", 500)),
-        Category(*(700, "Зарядки", 500)),
+        (400, "Смартфоны", "100,200,400", 200),
+        (500, "Аксессуары", "100,200,500", 200),
+        (600, "Чехлы", "100,200,500,600", 500),
+        (700, "Зарядки", "100,200,500,700", 500),
     ]
-    assert subtree == expected
+    assert subtree == [Category(*e) for e in expected]

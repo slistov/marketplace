@@ -5,19 +5,20 @@ from fastapi.testclient import TestClient
 from sqlalchemy import text
 
 from app.categories.adapters.orm import get_session
+from app.categories.routers import schemas
 from app.categories.routers.main import app
 
 client = TestClient(app=app)
 
 
-Row = namedtuple("Row", ["id", "name", "parent_id"])
+Row = namedtuple("Row", ["id", "name", "path", "parent_id"])
 
 
 async def load_to_db(session, rows: list[tuple]):
     for row in rows:
         await session.execute(
             text(
-                "INSERT INTO categories (id, name, parent_id) VALUES (:id, :name, :parent_id)"
+                "INSERT INTO categories (id, name, parent_id, path) VALUES (:id, :name, :parent_id, :path)"
             ),
             Row(*row)._asdict(),
         )
@@ -41,4 +42,9 @@ async def test_tree_by_category_id(session, db_content):
         (600, "Чехлы", 500),
         (700, "Зарядки", 500),
     ]
-    assert response.json() == [Row(*e)._asdict() for e in expected]
+    RespRow = namedtuple("Row", ["id", "name", "parent_id"])
+    expected_as_dicts = [RespRow(*e)._asdict() for e in expected]
+    expected_as_schemas = [
+        schemas.CategoryResponse.model_validate(e) for e in expected_as_dicts
+    ]
+    assert response.json() == [e.model_dump() for e in expected_as_schemas]

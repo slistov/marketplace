@@ -1,29 +1,31 @@
-from sqlalchemy import text
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.categories import exceptions
 from app.categories.domain.model import Category
-
-from . import sqls
 
 
 class Repo:
-    def __init__(self, session) -> None:
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
+
+    async def get(self, id):
+        return await self._get(id)
+
+    async def _get(self, id) -> Category:
+        cat = await self.session.get(Category, id)
+        if not cat:
+            raise exceptions.CategoryNotFound(id)
+        return cat
 
     async def get_subtree(self, id):
         return await self._get_subtree(id)
 
-    async def _get_subtree(self, id) -> list[Category]:
-        condition1 = f"= {id}" if id else "ISNULL"
-        sql = sqls.SUBTREE.replace(":condition1", condition1)
-        return await self.__get_as_models(
-            self.__exec_sql,
-            stmt=sql,
-        )
+    async def _get_subtree(self, id):
+        parent_cat = await self.get(id)
+        path_filter = parent_cat.path + ","
 
-    async def __get_as_models(self, sql_func, **kwargs) -> list[Category]:
-        """Convert sql result to models list"""
-        sql_result = await sql_func(**kwargs)
-        return [Category(*row) for row in sql_result]
-
-    async def __exec_sql(self, stmt, **kwargs):
-        return await self.session.execute(text(stmt), kwargs)
+        q = select(Category).filter(Category.path.startswith(path_filter))
+        result = await self.session.execute(q)
+        subtree = result.scalars().all()
+        return subtree
